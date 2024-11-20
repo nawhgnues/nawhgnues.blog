@@ -1,14 +1,13 @@
 import { Metadata } from "next";
 
-// import FloatingButton from "@/components/common/FloatingButton";
+import FloatingButton from "@/components/common/FloationgButton";
 // import Giscus from "@/components/post_detail/Giscus";
 import { PostBody } from "@/components/post_detail/PostBody";
 import { PostHeader } from "@/components/post_detail/PostHeader";
-// import TocSidebar from "@/components/post_detail/TableOfContentSidebar";
-// import TocTop from "@/components/post_detail/TableOfContentTop";
+import TocSidebar from "@/components/post_detail/TableOfContentSidebar";
+import TocTop from "@/components/post_detail/TableOfContentTop";
 import { baseDomain } from "@/config/const";
-// import { getPostDetail, getPostPaths, parsePostAbstract, parseToc } from "@/lib/post";
-import { getPostDetail, getPostPaths, parsePostAbstract } from "@/lib/post";
+import { getPostDetail, getPostPaths, parsePostAbstract, parseToc } from "@/lib/post";
 
 type Props = {
   params: { category: string; slug: string };
@@ -53,18 +52,18 @@ export function generateStaticParams() {
 
 const PostDetail = async ({ params: { category, slug } }: Props) => {
   const post = await getPostDetail(category, slug);
-  //   const toc = parseToc(post.content);
+  const toc = parseToc(post.content);
   return (
     <div className="prose mx-auto w-full max-w-[750px] px-5 dark:prose-invert sm:px-6">
       <PostHeader post={post} />
-      {/* <TocTop toc={toc} /> */}
+      <TocTop toc={toc} />
       <article className="relative">
-        {/* <TocSidebar toc={toc} /> */}
+        <TocSidebar toc={toc} />
         <PostBody post={post} />
       </article>
       <hr />
       {/* <Giscus /> */}
-      {/* <FloatingButton /> */}
+      <FloatingButton />
     </div>
   );
 };

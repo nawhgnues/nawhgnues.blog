@@ -1,3 +1,7 @@
+import { RESUME_DATA_JA } from "@/data/resume-data.ja";
+import { RESUME_DATA_EN } from "@/data/resume-data.en";
+import { RESUME_DATA_KO } from "@/data/resume-data.ko";
+
 export interface PostMatter {
   title: string;
   date: Date;
@@ -32,3 +36,21 @@ export interface CategoryDetail {
   publicName: string;
   count: number;
 }
+
+export const DATAS = {
+  en: {
+    data: RESUME_DATA_EN,
+    aboutClassName: "",
+  },
+  ko: {
+    data: RESUME_DATA_KO,
+    aboutClassName: "sm:whitespace-pre-wrap whitespace-normal",
+  },
+
+  ja: {
+    data: RESUME_DATA_JA,
+    aboutClassName: "",
+  },
+};
+
+export type Locale = keyof typeof DATAS;
