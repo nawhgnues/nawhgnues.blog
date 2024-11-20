@@ -31,5 +31,6 @@ export const useHeadingsObserver = (query: string) => {
     return () => observer.current?.disconnect();
   }, [query]);
 
-  return [...activeIdList, tempId];
+  // return [...activeIdList, tempId];
+  return [...activeIdList];
 };

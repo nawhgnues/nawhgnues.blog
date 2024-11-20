@@ -159,7 +159,7 @@ export default async function AboutPage({ params: { locale } }: Props) {
                         return (
                           <D.Dialog key={point.slug}>
                             <li className="ml-5 text-muted-foreground">
-                              <D.DialogTrigger className="underline underline-offset-4 hover:text-pink-600">
+                              <D.DialogTrigger className="underline underline-offset-4 hover:text-tomato">
                                 {point.title}
                               </D.DialogTrigger>
                             </li>

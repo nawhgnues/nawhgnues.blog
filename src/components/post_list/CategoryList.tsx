@@ -41,6 +41,7 @@ const CategoryList = ({ categoryList, allPostCount, currentCategory = "all" }: C
         </ul>
       </section>
       <section className="mb-10 sm:hidden">
+        <h1 className="text-4xl font-bold text-tomato mb-4">#Blog</h1>
         <Select onValueChange={onCategoryChange} defaultValue={currentCategory}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Theme" />

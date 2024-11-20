@@ -27,7 +27,7 @@ const TableOfContent = ({ toc }: Props) => {
               return (
                 <li
                   key={item.link}
-                  className={cn(isH3 && "ml-4", isIntersecting && "font-medium text-pink-600", "py-1 transition")}
+                  className={cn(isH3 && "ml-3", isIntersecting && "font-medium text-tomato", "py-1 transition")}
                 >
                   <Link href={item.link}>{item.text}</Link>
                 </li>

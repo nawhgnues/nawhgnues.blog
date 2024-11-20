@@ -2,7 +2,7 @@ import IconGithub from "@/components/icon/Github";
 import IconLinkedin from "@/components/icon/LinkedIn";
 
 export const RESUME_DATA_JA = {
-  name: "カポエラー",
+  name: "カぴバラ",
   initials: "ウユ",
   location: "日本、大阪市",
   locationLink: "https://www.google.com/maps/place/seoul",
