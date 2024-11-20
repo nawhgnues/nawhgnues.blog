@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Post } from "@/config/types";
-import { CalendarDays, Clock3 } from "lucide-react";
+// import { CalendarDays, Clock3 } from "lucide-react";
 
 interface Props {
   post: Post;
@@ -11,12 +11,12 @@ interface Props {
 const PostCard = ({ post }: Props) => {
   return (
     <Link href={post.url}>
-      <li className="flex h-full flex-col gap-3 overflow-hidden rounded-md border shadow-md transition hover:shadow-xl dark:border-slate-700 dark:hover:border-white">
-        <div className="relative aspect-video w-full rounded-t-md border-b">
+      <li className="flex h-full gap-3 overflow-hidden border-b-2 transition md:pb-8 dark:border-slate-700 dark:hover:border-white">
+        <div className="relative aspect-video w-[328px] h-[220px] rounded-t-md border-b hidden md:flex">
           <Image
             src={post.thumbnail}
             alt={`thumbnail for ${post.title}`}
-            sizes="(max-width: 1000px) 50vw, 450px"
+            sizes="100%"
             fill
             priority
             style={{
@@ -26,18 +26,14 @@ const PostCard = ({ post }: Props) => {
         </div>
         <div className="flex flex-1 flex-col justify-between p-4 pt-1">
           <div>
-            <div className="text-sm font-medium text-pink-600 lg:text-base">{post.categoryPublicName}</div>
-            <h2 className="mb-3 mt-1 text-lg font-bold sm:text-xl md:text-lg">{post.title}</h2>
-          </div>
-          <div className="flex justify-between gap-3 text-sm text-gray-500 dark:text-gray-400">
-            <div className="flex items-center gap-1">
-              <CalendarDays className="w-3.5" />
+            <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-gray-400 sm:text-sm">
               <span>{post.dateString}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Clock3 className="w-3.5" />
-              {/* <span>{post.readingMinutes}분</span> */}
-            </div>
+            <h2 className="mb-1 mt-1 text-lg font-bold sm:text-xl md:text-lg">{post.title}</h2>
+            <p className="mb-16 text-md text-gray-600">{post.desc}</p>
+          </div>
+          <div className="flex justify-between gap-3">
+            <div className="text-xs font-medium text-tomato">#{post.categoryPublicName}</div>
           </div>
         </div>
       </li>

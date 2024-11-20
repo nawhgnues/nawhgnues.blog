@@ -26,6 +26,7 @@ const CategoryList = ({ categoryList, allPostCount, currentCategory = "all" }: C
   return (
     <>
       <section className="mb-10 hidden sm:block">
+        <h1 className="text-4xl font-bold text-tomato mb-4">#Blog</h1>
         <ul className="flex gap-3">
           <CategoryButton href="/blog" isCurrent={currentCategory === "all"} displayName="All" count={allPostCount} />
           {categoryList.map((cg) => (
