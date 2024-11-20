@@ -1,10 +1,10 @@
 import { CategoryDetail, HeadingItem, Post, PostMatter } from "@/config/types";
-// import dayjs from "dayjs";
+import dayjs from "dayjs";
 import fs from "fs";
 import { sync } from "glob";
 import matter from "gray-matter";
 import path from "path";
-// import readingTime from 'reading-time';
+import readingTime from "reading-time";
 
 const BASE_PATH = "src/posts";
 const POSTS_PATH = path.join(process.cwd(), BASE_PATH);
@@ -46,9 +46,9 @@ const parsePostDetail = async (postPath: string) => {
   const file = fs.readFileSync(postPath, "utf8");
   const { data, content } = matter(file);
   const grayMatter = data as PostMatter;
-  // const readingMinutes = Math.ceil(readingTime(content).minutes);
-  // const dateString = dayjs(grayMatter.date).locale("ko").format("YYYY년 MM월 DD일");
-  return { ...grayMatter, content };
+  const readingMinutes = Math.ceil(readingTime(content).minutes);
+  const dateString = dayjs(grayMatter.date).locale("ko").format("YYYY년 MM월 DD일");
+  return { ...grayMatter, dateString, content, readingMinutes };
 };
 
 // category folder name을 public name으로 변경 : dir_name -> Dir Name
