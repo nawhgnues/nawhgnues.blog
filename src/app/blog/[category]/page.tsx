@@ -13,7 +13,6 @@ type Props = {
 
 // export function generateStaticParams() {
 //   const categoryList = getCategoryList();
-//   console.log(`categoryList: ${categoryList}`);
 //   const paramList = categoryList.map((category) => ({ category }));
 //   return paramList;
 // }

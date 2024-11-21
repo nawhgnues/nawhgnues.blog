@@ -62,7 +62,7 @@ const parsePostDetail = async (postPath: string) => {
   const { data, content } = matter(file);
   const grayMatter = data as PostMatter;
   const readingMinutes = Math.ceil(readingTime(content).minutes);
-  const dateString = dayjs(grayMatter.date).locale("ko").format("YYYY년 MM월 DD일");
+  const dateString = dayjs(grayMatter.date).locale("ko").format("YYYY.MM.DD");
   return { ...grayMatter, dateString, content, readingMinutes };
 };
 

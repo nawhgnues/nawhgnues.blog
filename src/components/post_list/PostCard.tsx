@@ -31,9 +31,7 @@ const PostCard = ({ post }: Props) => {
             <div className="flex items-center gap-3 transition text-xs text-gray-400 dark:text-gray-400 sm:text-sm">
               <span>{post.dateString}</span>
             </div>
-            <h2 className="mb-1 mt-1 text-lg font-bold sm:text-xl md:text-lg group-hover:text-gray-300">
-              {post.title}
-            </h2>
+            <h2 className="mb-1 mt-1 text-lg font-bold sm:text-xl md:text-lg group-hover:opacity-75">{post.title}</h2>
             <p className="mb-16 text-md text-gray-600">{post.desc}</p>
           </div>
         </Link>

@@ -25,9 +25,9 @@ const CategoryList = ({ categoryList, allPostCount, currentCategory = "all" }: C
 
   return (
     <>
-      <section className="mb-10 hidden sm:block">
+      <section className="mb-10 hidden px-4 sm:block">
         <h1 className="text-4xl font-bold text-tomato mb-4">#Blog</h1>
-        <ul className="flex gap-3">
+        <ul className="flex flex-wrap gap-3">
           <CategoryButton href="/blog" isCurrent={currentCategory === "all"} displayName="All" count={allPostCount} />
           {categoryList.map((cg) => (
             <CategoryButton
@@ -40,7 +40,7 @@ const CategoryList = ({ categoryList, allPostCount, currentCategory = "all" }: C
           ))}
         </ul>
       </section>
-      <section className="mb-10 sm:hidden">
+      <section className="mb-10 px-4 sm:hidden">
         <h1 className="text-4xl font-bold text-tomato mb-4">#Blog</h1>
         <Select onValueChange={onCategoryChange} defaultValue={currentCategory}>
           <SelectTrigger className="w-[180px]">

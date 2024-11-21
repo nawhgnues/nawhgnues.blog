@@ -12,7 +12,7 @@ const PostListPage = async ({ category }: PostListProps) => {
   const allPostCount = await getAllPostCount();
 
   return (
-    <section className="mx-auto mt-12 w-full max-w-[950px] px-4">
+    <section className="mx-auto mt-12 w-full max-w-[950px] transition-all duration-500 px-0  md:px-8">
       <CategoryList allPostCount={allPostCount} categoryList={categoryList} currentCategory={category} />
       <section>
         {postList.length === 0 ? (
