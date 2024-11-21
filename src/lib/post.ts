@@ -11,9 +11,24 @@ const POSTS_PATH = path.join(process.cwd(), BASE_PATH);
 
 // 모든 MDX 파일 조회
 export const getPostPaths = (category?: string) => {
-  const folder = category || "**";
-  const postPaths: string[] = sync(`${POSTS_PATH}/${folder}/**/*.mdx`);
-  return postPaths;
+  // const folder = category && category !== "" ? category : "**";
+  const postPaths: string[] = sync(`${POSTS_PATH}/**/**/*.mdx`);
+
+  // `category`가 없거나 빈 문자열이면 전체 경로 반환
+  if (!category) {
+    return postPaths;
+  }
+
+  // 특정 조건을 만족하는 파일만 필터링
+  const filteredPaths = postPaths.filter((filePath) => {
+    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const { data } = matter(fileContent); // 메타데이터 추출
+
+    // 조건에 맞는 경우 true를 반환
+    return data.tags && Array.isArray(data.tags) && data.tags.includes(category);
+  });
+
+  return filteredPaths;
 };
 
 // MDX 파일 파싱 : abstract / detail 구분
@@ -93,16 +108,18 @@ export const getCategoryList = () => {
   return cgList;
 };
 
-export const getCategoryDetailList = async () => {
-  const postList = await getPostList();
+export const getCategoryDetailList = async (post: Post[]) => {
+  const postList = post;
   const result: { [key: string]: number } = {};
   for (const post of postList) {
-    const category = post.categoryPath;
-    if (result[category]) {
-      result[category] += 1;
-    } else {
-      result[category] = 1;
-    }
+    const category = post.tags;
+    category.map((c) => {
+      if (result[c]) {
+        result[c] += 1;
+      } else {
+        result[c] = 1;
+      }
+    });
   }
   const detailList: CategoryDetail[] = Object.entries(result).map(([category, count]) => ({
     dirName: category,

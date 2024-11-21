@@ -8,18 +8,22 @@ interface PostListProps {
 
 const PostListPage = async ({ category }: PostListProps) => {
   const postList = await getSortedPostList(category);
-  const categoryList = await getCategoryDetailList();
+  const categoryList = await getCategoryDetailList(postList);
   const allPostCount = await getAllPostCount();
 
   return (
     <section className="mx-auto mt-12 w-full max-w-[950px] px-4">
       <CategoryList allPostCount={allPostCount} categoryList={categoryList} currentCategory={category} />
       <section>
-        <ul className="grid grid-cols-1 gap-8">
-          {postList.map((post, index) => (
-            <PostCard key={index} post={post} />
-          ))}
-        </ul>
+        {postList.length === 0 ? (
+          <p>게시물이 없습니다</p>
+        ) : (
+          <ul className="grid grid-cols-1 gap-8">
+            {postList.map((post, index) => (
+              <PostCard key={index} post={post} />
+            ))}
+          </ul>
+        )}
       </section>
     </section>
   );

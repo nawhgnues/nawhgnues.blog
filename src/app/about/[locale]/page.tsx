@@ -15,7 +15,6 @@ import { DATAS, Locale } from "@/config/types";
 // import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
-import { redirect } from "next/navigation";
 
 interface Props {
   params: {
@@ -36,10 +35,6 @@ export function generateMetadata({ params: { locale } }: Props): Metadata {
 }
 
 export default async function AboutPage({ params: { locale } }: Props) {
-  if (!["ko", "en", "ja"].includes(locale)) {
-    redirect("/404");
-  }
-
   const RESUME_DATA = DATAS[locale].data;
   // const projectList = await getSortedProjectList(locale);
   // const careerProjectList = await getCareerProjectList(locale);

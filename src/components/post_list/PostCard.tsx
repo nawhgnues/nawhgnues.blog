@@ -38,11 +38,13 @@ const PostCard = ({ post }: Props) => {
           </div>
         </Link>
 
-        <Link href={`/blog/${post.categoryPublicName.toLowerCase()}`} className="w-min group">
-          <div className="flex justify-between gap-3">
-            <div className="text-sm font-bold text-tomato group-hover:text-blue-500">#{post.categoryPublicName}</div>
-          </div>
-        </Link>
+        <div className="flex gap-3">
+          {post.tags?.map((tag) => (
+            <Link key={tag} href={`/blog/${tag.toLowerCase()}`} className="w-min group">
+              <div className="text-sm font-bold mr-1 text-tomato group-hover:text-blue-500">#{tag}</div>
+            </Link>
+          )) || <div className="text-sm text-gray-400">No tags available</div>}
+        </div>
       </div>
     </li>
   );
