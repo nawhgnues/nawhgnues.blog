@@ -2,7 +2,7 @@ import IconGithub from "@/components/icon/Github";
 import IconLinkedin from "@/components/icon/LinkedIn";
 
 export const RESUME_DATA_KO = {
-  name: "카피바라",
+  name: "이 승환",
   initials: "우유",
   location: "일본 오사카시",
   locationLink: "https://www.google.com/maps/place/seoul",
