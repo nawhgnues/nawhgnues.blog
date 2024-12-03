@@ -35,7 +35,7 @@ export const RESUME_DATA_JA = {
     {
       school: "朝鮮大學校(韓国)",
       degree: "コンピュータ工学",
-      start: "2014",
+      start: "2019",
       end: "2021",
     },
   ],

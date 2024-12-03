@@ -16,7 +16,7 @@ const PostListPage = async ({ category }: PostListProps) => {
       <CategoryList allPostCount={allPostCount} categoryList={categoryList} currentCategory={category} />
       <section>
         {postList.length === 0 ? (
-          <p>게시물이 없습니다</p>
+          <p className="text-center text-gray-400 mt-32">게시물이 없습니다</p>
         ) : (
           <ul className="grid grid-cols-1 gap-8">
             {postList.map((post, index) => (

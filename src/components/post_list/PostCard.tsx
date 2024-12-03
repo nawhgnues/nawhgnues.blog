@@ -12,7 +12,7 @@ const PostCard = ({ post }: Props) => {
   return (
     <li className="flex h-full gap-3 overflow-hidden border-b-2 transition md:pb-8 dark:border-slate-700">
       <Link href={post.url}>
-        <div className="relative aspect-video w-[328px] h-[220px] rounded-2xl border-b hidden overflow-hidden md:flex hover:opacity-75">
+        <div className="relative aspect-video w-[328px] h-[220px] rounded-2xl hidden overflow-hidden md:flex hover:opacity-75">
           <Image
             src={post.thumbnail}
             alt={`thumbnail for ${post.title}`}

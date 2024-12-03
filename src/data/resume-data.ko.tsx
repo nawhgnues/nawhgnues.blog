@@ -49,7 +49,7 @@ export const RESUME_DATA_KO = {
       description: "웹 시스템을 통한 업무 효율화 전문 집단",
       points: [
         "React 기반 SPA 제작, Recoil을 통한 상태 관리",
-        "JS에서 작성되었던 기존 코드 리팩토링",
+        "JS로 작성되었있던 기존 코드 리팩토링",
         "Web 개발에 관한 기사 작성",
         "다언어 처리 개발",
         "모바일 앱 프론트 개발 및 출시",
