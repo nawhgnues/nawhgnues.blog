@@ -10,18 +10,22 @@ import { useSpyElem } from "@/hook/useSpy";
 import ThemeSwitch from "@/layouts/theme/Switch";
 import { cn } from "@/lib/utils";
 import { Github } from "lucide-react";
-
-const navList = [
-  { name: "Blog", href: "/blog" },
-  { name: "About", href: "/about" },
-];
+import { useState } from "react";
 
 const localePathList = ["/about"];
 
 export const Header = () => {
   const { ref, marginTop } = useSpyElem(65);
+  const [lang, setLang] = useState("ko");
+
   const pathname = usePathname();
   const isLocalePath = localePathList.some((path) => pathname.startsWith(path));
+
+
+  const navList = [
+    { name: "Tech", href: `/blog/${lang}` },
+    { name: "About", href: "/about" },
+  ];
 
   return (
     <nav
@@ -45,12 +49,13 @@ export const Header = () => {
           ))}
         </div>
 
-        {isLocalePath && <LanguageSelector className="hidden sm:flex" />}
+        {isLocalePath && <LanguageSelector setLang={setLang}/>}
 
         <div className="flex gap-3">
+          {!isLocalePath && <LanguageSelector setLang={setLang}/>}
           <ThemeSwitch />
           <Button asChild variant="ghost" size="icon">
-            <Link href="https://www.google.com" target="_blank">
+            <Link href="https://github.com/nawhgnues" target="_blank">
               <Github className="size-[1.2rem]" />
             </Link>
           </Button>

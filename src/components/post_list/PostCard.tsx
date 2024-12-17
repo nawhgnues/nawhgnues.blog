@@ -6,9 +6,10 @@ import { Post } from "@/config/types";
 
 interface Props {
   post: Post;
+  locale: string;
 }
 
-const PostCard = ({ post }: Props) => {
+const PostCard = ({ post, locale }: Props) => {
   return (
     <li className="flex h-full gap-3 overflow-hidden border-b-2 transition md:pb-8 dark:border-slate-700">
       <Link href={post.url}>
@@ -38,7 +39,7 @@ const PostCard = ({ post }: Props) => {
 
         <div className="flex gap-3">
           {post.tags?.map((tag) => (
-            <Link key={tag} href={`/blog/${tag.toLowerCase()}`} className="w-min group">
+            <Link key={tag} href={`/blog/${locale}/${tag.toLowerCase()}`} className="w-min group">
               <div className="text-sm font-bold mr-1 text-tomato group-hover:text-blue-500">#{tag}</div>
             </Link>
           )) || <div className="text-sm text-gray-400">No tags available</div>}

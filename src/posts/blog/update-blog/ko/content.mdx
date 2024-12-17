@@ -1,0 +1,51 @@
+---
+title: "Nextjs 이용해서 직접 블로그 만들기"
+date: 2024-12-03
+desc: nextjs, tailwindcss + shadcn/ui, mdx 이용한 블로그 만들기
+thumbnail: /posts/blog/update-blog/blog.jpg
+tags: ["blog"]
+locale: ko
+---
+
+### 블로그를 새로 만들게 된 이유
+
+누군가가 작성해둔 블로그 템블릿을 사용하면 빠르고 간편하게 블로그를 만들 수 있다는 장점이 있지만 디자인을 변경한다던가 필요한 기능을 추가하려고 할 때 곤란해지는 상황이 몇 번이 있었다.
+
+그래서 이번엔 내가 원하는 대로 직접 블로그를 만들어보게 되었다.
+
+
+### 사용한 기술 스택
+
+#### 1. Framework : [Next.js](https://nextjs.org/)
+
+현재 프론트엔드 쪽에서 가장 핫한 프레임워크라고 생각한다.
+SSR을 지원하고 SEO에 유리하다는 등의 여러가지 장점이 있는 것 같다.
+
+#### 2. Design : [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/ui](https://ui.shadcn.com/)
+
+이 라이브러리도 현재 핫한 디자인 라이브러리라고 생각한다.
+class를 일일히 작명하는 것이 생각보다 큰 수고였음을 느끼게 해 주는 라이브러리이다.
+
+tailwindcss에 추가로 headless component lib인 shadcn을 사용했다.
+tailwindcss 기반으로 스타일이 작성되어 있으며, 커스터마이징이 용이하다.
+
+#### 3. Posting : [MDX](https://mdxjs.com/)
+
+글은 mdx파일로 작성해 프로젝트 내부 디렉토리에 저장했다.
+기본적인 md에 jsx 문법을 추가로 사용할 수 있는 mdx를 사용했다.
+
+#### 4. Parsing : [Gray-matter](https://github.com/jonschlinkert/gray-matter) + [Next-MDX-Remote](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support)
+
+작성된 mdx 파일의 메타 정보와 본문 내용을 파싱했다.
+파싱된 정보들을 토대로 게시글 목록을 보여준다.
+
+gray-matter : 글 제목, 설명, 작성일, 썸네일 파싱
+next-mdx-remote : 글 본문을 html 형식으로 remark, rehype
+
+#### 6. Deploy : [Vercel](https://vercel.com/dashboard)
+
+정적 웹사이트 및 서버리스 함수를 배포하고 관리하는 데 사용되는 cloud platform이다.
+Next.js는 vercel에서 만든 프레임워크이므로 호환성이 매우 높다.
+
+github repository를 연동해두면 CI/CD 파이프라인도 자동으로 수행됩니다.
+개인적인 domain 주소도 구매하여 바로 연결할 수 있고, 페이지 분석 통계 tool도 제공한다.

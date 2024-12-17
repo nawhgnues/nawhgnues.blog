@@ -1,10 +1,5 @@
-import PostListPage from "@/components/post_list/PostListPage";
-import React from "react";
+import { redirect } from "next/navigation";
 
-export default function page() {
-  return (
-    <div>
-      <PostListPage />
-    </div>
-  );
+export default function Home() {
+  redirect("/blog");
 }

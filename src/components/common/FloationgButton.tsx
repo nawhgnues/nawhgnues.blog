@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import CopyLinkButton from "./CopyLinkButton";
-import { ScrollToComment, ScrollTop } from "./TocButtons";
+import { ScrollTop } from "./TocButtons";
 import { Button } from "@/components/ui/button";
 import { useOutsideClick } from "@/hook/useOutsideClick";
 import { cn } from "@/lib/utils";
@@ -32,11 +32,11 @@ const FloatingButton = () => {
           size={22}
           className={cn("absolute bottom-0 right-0 transition", visible && "-translate-y-12")}
         />
-        <ScrollToComment
+        {/* <ScrollToComment
           size={22}
           className={cn("absolute bottom-0 right-0 transition", visible && "-translate-y-24")}
-        />
-        <ScrollTop className={cn("absolute bottom-0 right-0 transition", visible && "-translate-y-36")} size={22} />
+        /> */}
+        <ScrollTop className={cn("absolute bottom-0 right-0 transition", visible && "-translate-y-24")} size={22} />
       </div>
     </div>
   );

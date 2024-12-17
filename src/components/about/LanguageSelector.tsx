@@ -8,13 +8,21 @@ import * as S from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { GlobeIcon } from "lucide-react";
 
-export default function LanguageSelector({ className }: { className?: string }) {
+export default function LanguageSelector({
+  className,
+  setLang,
+}: {
+  className?: string;
+  setLang: (lang: string) => void;
+}) {
+  console.log(setLang)
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   const LANGUAGES = ["ko", "en", "ja"];
-  const currentLang = LANGUAGES.find((lang) => pathname.endsWith(`/${lang}`)) || "ko";
+  const currentLang = LANGUAGES.find((lang) => new RegExp(`/${lang}(/|$)`).test(pathname)) || "ko";
+
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
@@ -26,7 +34,9 @@ export default function LanguageSelector({ className }: { className?: string }) 
   }
 
   const onSelectChange = (value: string) => {
-    router.push(pathname.replace(/\/(en|ko|ja)$/, `/${value}`));
+    setLang(value); 
+    localStorage.setItem("locale", value);
+    router.push(pathname.replace(/\/(en|ko|ja)(\/|$)/, `/${value}/`));
   };
 
   return (

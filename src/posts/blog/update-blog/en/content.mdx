@@ -1,0 +1,51 @@
+---
+title: "Create own blog with Nextjs "
+date: 2024-12-03
+desc: Creating a blog with nextjs, tailwindcss + shadcn/ui, mdx
+thumbnail: /posts/blog/update-blog/blog.jpg
+tags: ["blog"]
+locale: en
+---
+
+### Why I decided to create my own blog
+
+Using a pre-built blog template is a quick and easy way to create a blog, but there were a few times when I wanted to change the design or add features that I needed.
+
+So this time, I decided to create my own blog, customizing it to my liking.
+
+
+### Technology stack used
+
+#### 1. Framework : [Next.js](https://nextjs.org/)
+
+I think this is the hottest framework for frontend right now.
+It seems to have a lot of advantages, such as SSR support and good SEO.
+
+#### 2. Design : [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/ui](https://ui.shadcn.com/)
+
+I think this library is also a hot design library right now.
+It is a library that makes you realize that naming each class was a bigger effort than you thought.
+
+In addition to tailwindcss, I used shadcn, a headless component lib.
+It is styled based on tailwindcss and is highly customizable.
+
+#### 3. Posting : [MDX](https://mdxjs.com/)
+
+I wrote the post as an mdx file and saved it in the internal directory of the project.
+I used MDX, which can use JSX syntax in addition to basic MD.
+
+#### 4. Parsing : [Gray-matter](https://github.com/jonschlinkert/gray-matter) + [Next-MDX-Remote](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support)
+
+We parsed the meta information and body content of the created mdx file.
+It shows the list of posts based on the parsed information.
+
+gray-matter : parsed post title, description, date, and thumbnail
+next-mdx-remote : remark, rehype the post body in html format
+
+#### 6. Deploy : [Vercel](https://vercel.com/dashboard)
+
+Vercel is a cloud platform used to deploy and manage static websites and serverless functions.
+Next.js is a framework created by vercel, so it is highly compatible.
+
+If you link the github repository, your CI/CD pipeline will be done automatically.
+You can also purchase your own domain address and connect it right away, and it also provides a page analysis statistics tool.

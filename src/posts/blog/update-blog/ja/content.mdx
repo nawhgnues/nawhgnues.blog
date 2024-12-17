@@ -1,0 +1,51 @@
+---
+title: "Nextjsを利用して直接ブログを作成する"
+date: 2024-12-03
+desc: nextjs, tailwindcss + shadcn/ui, mdxを利用したブログ作り
+thumbnail: /posts/blog/update-blog/blog.jpg
+tags: ["blog"]
+locale: ja
+---
+
+### ブログを新しく作ることになった理由
+
+誰かが作成したブログテンプレートを使うと、素早く簡単にブログを作ることができるという利点がありますが、デザインを変更したり、必要な機能を追加しようとすると困ることが何度かありました。
+
+だから、今回は自分の好きなように自分でブログを作ってみることにしました。
+
+
+### 使用した技術スタック
+
+#### 1.Framework：[Next.js](https://nextjs.org/)
+
+現在フロントエンドで一番ホットなフレームワークだと思います。
+SSRをサポートし、SEOに有利であるなどの色んな利点があるようです。
+
+#### 2. Design : [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/ui](https://ui.shadcn.com/)
+
+このライブラリも現在ホットなデザインライブラリだと思います。
+classをいちいち命名するのが思ったより大変だったことを感じさせてくれるライブラリです。
+
+tailwindcssに追加でheadless component libであるshadcnを使いました。
+tailwindcssベースでスタイルが作成されており、カスタマイズが容易です。
+
+#### 3. Posting : [MDX](https://mdxjs.com/)
+
+記事はmdxファイルで作成してプロジェクト内部ディレクトリに保存しました。
+基本的なmdにjsx文法を追加で使えるmdxを使いました。
+
+#### 4. Parsing : [Gray-matter](https://github.com/jonschlinkert/gray-matter) + [Next-MDX-Remote](https://github.com/hashicorp/next-mdx-remote#react-server-components-rsc--nextjs-app-directory-support)
+
+作成されたmdxファイルのメタ情報と本文内容を解析しました。
+パースされた情報をもとに投稿一覧を表示します。
+
+gray-matter : 記事のタイトル、説明、作成日、サムネイルを解析します。
+next-mdx-remote : 記事本文をhtml形式でremark, rehype
+
+#### 6. Deploy : [Vercel](https://vercel.com/dashboard)
+
+静的なウェブサイトやサーバーレス関数をデプロイして管理するため使われるcloud platformです。
+Next.jsはvercelで作ったフレームワークなので互換性がとても高いです。
+
+github repositoryを連動しておけば、CI/CDパイプラインも自動で実行されます。
+個人的なdomainアドレスも購入してすぐに接続することができ、ページ分析統計ツールも提供する。

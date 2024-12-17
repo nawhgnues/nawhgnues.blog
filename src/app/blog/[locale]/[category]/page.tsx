@@ -5,7 +5,7 @@ import { baseDomain, blogName, blogThumbnailURL } from "@/config/const";
 import { getCategoryPublicName } from "@/lib/post";
 
 type Props = {
-  params: { category: string };
+  params: { category: string, locale: string};
 };
 
 // 허용된 param 외 접근시 404
@@ -37,7 +37,7 @@ export async function generateMetadata({ params: { category } }: Props): Promise
 }
 
 const CategoryPage = async ({ params }: Props) => {
-  return <PostListPage category={params.category} />;
+  return <PostListPage category={params.category} locale={params.locale}/>;
 };
 
 export default CategoryPage;
