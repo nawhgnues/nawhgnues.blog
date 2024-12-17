@@ -9,14 +9,14 @@ import TocTop from "@/components/post_detail/TableOfContentTop";
 import { baseDomain } from "@/config/const";
 import { getPostDetail, getPostPaths, parsePostAbstract, parseToc } from "@/lib/post";
 
-type Props = {
-  params: { category: string; slug: string, locale: string };
-};
+// type Props = {
+//   params: { category: string; slug: string, locale: string };
+// };
 
 // 허용된 param 외 접근시 404
 export const dynamicParams = false;
 
-export async function generateMetadata({ params: { category, slug, locale } }: Props): Promise<Metadata> {
+export async function generateMetadata({ params: { category, slug, locale } }: any): Promise<Metadata> {
   const post = await getPostDetail(category, slug, locale);
   const title = `${post.title} | nawhgnues`;
   const imageURL = `${baseDomain}${post.thumbnail}`;
@@ -41,7 +41,7 @@ export async function generateMetadata({ params: { category, slug, locale } }: P
   };
 }
 
-export function generateStaticParams({ params: { locale }}: Props) {
+export function generateStaticParams({ params: { locale }}: any) {
   const postPaths: string[] = getPostPaths(locale);
   const paramList = postPaths
     .map((path) => parsePostAbstract(path, locale))
@@ -49,7 +49,7 @@ export function generateStaticParams({ params: { locale }}: Props) {
   return paramList;
 }
 
-const PostDetail = async ({ params: { category, slug, locale } }: Props) => {
+const PostDetail = async ({ params: { category, slug, locale } }: any) => {
   const post = await getPostDetail(category, slug, locale);
   const toc = parseToc(post.content);
   return (
