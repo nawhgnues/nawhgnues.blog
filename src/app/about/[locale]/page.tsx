@@ -32,7 +32,7 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
   };
 }
 
-export default async function AboutPage({ params }: { params: Params }) {
+export default async function AboutPage({ params }: any) {
   const RESUME_DATA = DATAS[params.locale].data;
   // const projectList = await getSortedProjectList(locale);
   // const careerProjectList = await getCareerProjectList(locale);
