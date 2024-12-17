@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-
-import LanguageSelector from "@/components/about/LanguageSelector";
 // import ProjectList from "@/components/about/project-list";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
 // import { ProjectBody } from "@/components/project-detail/project-body";
@@ -11,31 +9,31 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import * as D from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Section } from "@/components/ui/section";
-import { DATAS, Locale } from "@/config/types";
+import { DATAS } from "@/config/types";
 // import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
 
-// interface Props {
-//   params: {
-//     locale: Locale;
-//   };
-// }
+// Locale 타입이 DATAS의 키로만 제한되도록
+type DataType = typeof DATAS;
+type LocaleKey = keyof DataType;
 
-// export function generateStaticParams() {
-//   return Object.keys(DATAS).map((locale) => ({ locale }));
-// }
+export function generateStaticParams() {
+  return Object.keys(DATAS).map((locale) => ({ locale }));
+}
 
-// export function generateMetadata({ params: { locale } }: Props): Metadata {
-//   const data = DATAS[locale].data;
-//   return {
-//     title: `${data.name} | ${data.about}`,
-//     description: data.summary,
-//   };
-// }
-
-export default function ResumePage({ params: { locale } }: any) {
+export function generateMetadata({ params }: { params: { locale: LocaleKey } }): Metadata {
+  const locale = params.locale;
   const RESUME_DATA = DATAS[locale].data;
+  return {
+    title: `${RESUME_DATA.name} | ${RESUME_DATA.about}`,
+    description: RESUME_DATA.summary,
+  };
+}
+
+export default function ResumePage({ params }: { params: { locale: LocaleKey }}) {
+  const locale = params.locale;
+  const RESUME_DATA = DATAS[locale].data; // locale이 정확히 DATAS의 키 중 하나임을 보장
   // const projectList = await getSortedProjectList(locale);
   // const careerProjectList = await getCareerProjectList(locale);
   return (
