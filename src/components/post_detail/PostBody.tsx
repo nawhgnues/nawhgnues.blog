@@ -3,8 +3,8 @@ import { Post } from "@/config/types";
 // import remarkA11yEmoji from "@fec/remark-a11y-emoji";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
-import rehypePrettyCode from "rehype-pretty-code";
-import rehypeSlug from "rehype-slug";
+// import rehypePrettyCode from "rehype-pretty-code";
+// import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 
@@ -27,19 +27,19 @@ export const PostBody = ({ post }: Props) => {
               // mdx 1줄 개행 지원
               remarkBreaks,
             ],
-            rehypePlugins: [
-              // pretty code block
-              [
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                rehypePrettyCode,
-                {
-                  theme: { dark: "github-dark-dimmed", light: "github-light" },
-                },
-              ],
-              // toc id를 추가하고 제목을 연결
-              rehypeSlug,
-            ],
+            // rehypePlugins: [
+            //   // pretty code block
+            //   [
+            //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //     // @ts-ignore
+            //     // rehypePrettyCode,
+            //     // {
+            //     //   theme: { dark: "github-dark-dimmed", light: "github-light" },
+            //     // },
+            //   ],
+            //   // toc id를 추가하고 제목을 연결
+            //   rehypeSlug,
+            // ],
           },
         }}
         components={MdxComponents}

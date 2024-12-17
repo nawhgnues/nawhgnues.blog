@@ -12,6 +12,7 @@ interface Props {
   toc: HeadingItem[];
 }
 
+// TODO: Need to modify to library not supported
 const TableOfContent = ({ toc }: Props) => {
   const activeIdList = useHeadingsObserver("h2, h3");
 
