@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import * as D from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Section } from "@/components/ui/section";
-import { DATAS, Locale } from "@/config/types";
+import { DATAS } from "@/config/types";
 // import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
@@ -34,13 +34,12 @@ export function generateMetadata({ params: { locale } }: Props): Metadata {
   };
 }
 
-export default async function AboutPage({ params: { locale } }: Props) {
+export default function AboutPage({ params: { locale } }: Props) {
   const RESUME_DATA = DATAS[locale].data;
   // const projectList = await getSortedProjectList(locale);
   // const careerProjectList = await getCareerProjectList(locale);
   return (
     <main className="container relative mx-auto scroll-my-12 overflow-auto p-6 sm:p-9 md:p-16 print:p-12 print:pt-0">
-      <LanguageSelector className="m-auto mb-5 border-0 sm:hidden print:hidden" />
       <Section className="mx-auto w-full max-w-2xl space-y-8 print:space-y-4">
         <div className="flex flex-col-reverse items-center justify-between gap-4 sm:flex-row">
           <div className="flex-1 space-y-1.5 text-center sm:text-start">
