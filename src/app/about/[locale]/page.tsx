@@ -18,7 +18,7 @@ import { GlobeIcon, MailIcon } from "lucide-react";
 
 interface Props {
   params: {
-    locale: Locale;
+    locale: any;
   };
 }
 
