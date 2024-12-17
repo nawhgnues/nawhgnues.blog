@@ -16,24 +16,26 @@ import { DATAS, Locale } from "@/config/types";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
 
-interface Params {
-  locale: Locale;
+interface Props {
+  params: {
+    locale: Locale;
+  };
 }
 
 export function generateStaticParams() {
   return Object.keys(DATAS).map((locale) => ({ locale }));
 }
 
-export function generateMetadata({ params }: { params: Params }): Metadata {
-  const data = DATAS[params.locale].data;
+export function generateMetadata({ params: { locale } }: Props): Metadata {
+  const data = DATAS[locale].data;
   return {
     title: `${data.name} | ${data.about}`,
     description: data.summary,
   };
 }
 
-export default async function AboutPage({ params }: any) {
-  const RESUME_DATA = DATAS[params.locale].data;
+export default async function AboutPage({ params: { locale } }: Props) {
+  const RESUME_DATA = DATAS[locale].data;
   // const projectList = await getSortedProjectList(locale);
   // const careerProjectList = await getCareerProjectList(locale);
   return (
@@ -106,7 +108,7 @@ export default async function AboutPage({ params }: any) {
           <p
             className={cn(
               "text-pretty leading-8 text-muted-foreground print:text-[12px]",
-              DATAS[params.locale].aboutClassName
+              DATAS[locale].aboutClassName
             )}
           >
             {RESUME_DATA.summary}
