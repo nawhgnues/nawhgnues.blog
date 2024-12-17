@@ -22,17 +22,17 @@ interface Props {
   };
 }
 
-export function generateStaticParams() {
-  return Object.keys(DATAS).map((locale) => ({ locale }));
-}
+// export function generateStaticParams() {
+//   return Object.keys(DATAS).map((locale) => ({ locale }));
+// }
 
-export function generateMetadata({ params: { locale } }: Props): Metadata {
-  const data = DATAS[locale].data;
-  return {
-    title: `${data.name} | ${data.about}`,
-    description: data.summary,
-  };
-}
+// export function generateMetadata({ params: { locale } }: Props): Metadata {
+//   const data = DATAS[locale].data;
+//   return {
+//     title: `${data.name} | ${data.about}`,
+//     description: data.summary,
+//   };
+// }
 
 export default function AboutPage({ params: { locale } }: Props) {
   const RESUME_DATA = DATAS[locale].data;
