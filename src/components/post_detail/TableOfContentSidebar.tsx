@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 import CopyLinkButton from "../common/CopyLinkButton";
-import { ScrollToComment, ScrollTop } from "../common/TocButtons";
+import { ScrollTop } from "../common/TocButtons";
 import { HeadingItem } from "@/config/types";
 import { useHeadingsObserver } from "@/hook/useHeadingsObserver";
 import { cn } from "@/lib/utils";
