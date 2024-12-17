@@ -11,15 +11,14 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import * as D from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Section } from "@/components/ui/section";
-import { DATAS, Locale } from "@/config/types";
+import { DATAS } from "@/config/types";
 // import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
-import { useState } from "react";
 
 interface Props {
   params: {
-    locale: Locale;
+    locale: keyof typeof DATAS;  
   };
 }
 
