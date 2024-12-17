@@ -11,31 +11,29 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import * as D from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Section } from "@/components/ui/section";
-import { DATAS } from "@/config/types";
+import { DATAS, Locale } from "@/config/types";
 // import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
 
-interface Props {
-  params: {
-    locale: keyof typeof DATAS;  
-  };
+interface Params {
+  locale: Locale;
 }
 
 export function generateStaticParams() {
   return Object.keys(DATAS).map((locale) => ({ locale }));
 }
 
-export function generateMetadata({ params: { locale } }: Props): Metadata {
-  const data = DATAS[locale].data;
+export function generateMetadata({ params }: { params: Params }): Metadata {
+  const data = DATAS[params.locale].data;
   return {
     title: `${data.name} | ${data.about}`,
     description: data.summary,
   };
 }
 
-export default async function AboutPage({ params: { locale } }: Props) {
-  const RESUME_DATA = DATAS[locale].data;
+export default async function AboutPage({ params }: { params: Params }) {
+  const RESUME_DATA = DATAS[params.locale].data;
   // const projectList = await getSortedProjectList(locale);
   // const careerProjectList = await getCareerProjectList(locale);
   return (
@@ -108,7 +106,7 @@ export default async function AboutPage({ params: { locale } }: Props) {
           <p
             className={cn(
               "text-pretty leading-8 text-muted-foreground print:text-[12px]",
-              DATAS[locale].aboutClassName
+              DATAS[params.locale].aboutClassName
             )}
           >
             {RESUME_DATA.summary}
