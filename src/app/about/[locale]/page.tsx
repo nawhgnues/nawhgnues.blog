@@ -15,6 +15,7 @@ import { DATAS, Locale } from "@/config/types";
 // import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
+import { useState } from "react";
 
 interface Props {
   params: {

@@ -15,7 +15,7 @@ export default function LanguageSelector({
   className?: string;
   setLang: (lang: string) => void;
 }) {
-  console.log(setLang)
+
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
