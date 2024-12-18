@@ -85,7 +85,7 @@ const sortPostList = (PostList: Post[]) => {
 // 모든 포스트 목록 조회. 블로그 메인 페이지에서 사용
 export const getPostList = async (category?: string, locale?: string): Promise<Post[]> => {
   const postPaths = getPostPaths(category, locale);
-  const postList = await Promise.all(postPaths.map((postPath) => parsePost(postPath, locale)));
+  const postList = await Promise.all(postPaths.map((postPath) => parsePost(postPath, locale!)));
   return postList;
 };
 
@@ -104,7 +104,7 @@ export const getSitemapPostList = async () => {
   return sitemapPostList;
 };
 
-export const getAllPostCount = async (postList) => postList.length;
+export const getAllPostCount = async (postList:Post[]) => postList.length;
 
 // export const getCategoryList = () => {
 //   const cgPaths: string[] = sync(`${POSTS_PATH}/${locale}/*`);

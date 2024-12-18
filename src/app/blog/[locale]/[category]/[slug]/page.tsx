@@ -16,7 +16,7 @@ import { getPostDetail, getPostPaths, parsePostAbstract, parseToc } from "@/lib/
 // 허용된 param 외 접근시 404
 export const dynamicParams = false;
 
-export async function generateMetadata({ params: { category, slug, locale } }: any): any {
+export async function generateMetadata({ params: { category, slug, locale } }: any): Promise<Metadata> {
   const post = await getPostDetail(category, slug, locale);
   const title = `${post.title} | nawhgnues`;
   const imageURL = `${baseDomain}${post.thumbnail}`;
@@ -58,7 +58,7 @@ const PostDetail = async ({ params: { category, slug, locale } }: any) => {
       <TocTop toc={toc} />
       <article className="relative">
         <TocSidebar toc={toc} />
-        <PostBody post={post} />
+        <PostBody post={post} locale={locale}/>
       </article>
       <hr />
       {/* <Giscus /> */}

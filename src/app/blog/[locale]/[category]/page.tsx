@@ -17,7 +17,7 @@ import { getCategoryPublicName } from "@/lib/post";
 //   return paramList;
 // }
 
-export async function generateMetadata({ params: { category } }: any): any {
+export async function generateMetadata({ params: { category } }: any): Promise<Metadata> {
   const cg = getCategoryPublicName(category);
   const title = `${cg} | ${blogName}`;
   const url = `${baseDomain}/${category}`;
