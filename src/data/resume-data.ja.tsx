@@ -46,7 +46,7 @@ export const RESUME_DATA_JA = {
       title: "フロントエンド",
       start: "2022. 09.",
       end: null,
-      description: "Webシステムによる業務効率化のプロフェッショナル集団",
+      description: "フロントエンド開発",
       points: [
         "ReactベースのSPA製作、Recoilによる状態管理",
         "JSコードリファクタリング",

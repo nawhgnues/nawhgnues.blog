@@ -46,7 +46,7 @@ export const RESUME_DATA_EN = {
       title: "Frontend",
       start: "2022. 09.",
       end: null,
-      description: "A specialized group for streamlining work efficiency through web systems",
+      description: "Frontend development",
       points: [
         "Developing SPA (Single Page Applications) using React and managing state with Recoil",
         "Refactoring codes written in JS",
