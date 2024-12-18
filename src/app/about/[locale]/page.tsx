@@ -9,20 +9,23 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import * as D from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Section } from "@/components/ui/section";
-import { DATAS } from "@/config/types";
+import { DATAS, Locale } from "@/config/types";
 // import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
+import { ReactNode } from "react";
 
 // Locale 타입이 DATAS의 키로만 제한되도록
-type DataType = typeof DATAS;
-type LocaleKey = keyof DataType;
-
-export function generateStaticParams() {
-  return Object.keys(DATAS).map((locale) => ({ locale }));
+interface PageProps {
+  params: {
+    locale: Locale;
+  };
+}
+export function generateStaticParams(): { locale: Locale }[] {
+  return Object.keys(DATAS).map((locale) => ({ locale })) as { locale: Locale }[];
 }
 
-export function generateMetadata({ params }: { params: { locale: LocaleKey } }): Metadata {
+export function generateMetadata({ params }: PageProps): Metadata {
   const locale = params.locale;
   const RESUME_DATA = DATAS[locale].data;
   return {
@@ -31,9 +34,10 @@ export function generateMetadata({ params }: { params: { locale: LocaleKey } }):
   };
 }
 
-export default function ResumePage({ params }: { params: { locale: LocaleKey }}) {
+export default function ResumePage({ params }: PageProps): ReactNode {
   const locale = params.locale;
-  const RESUME_DATA = DATAS[locale].data; // locale이 정확히 DATAS의 키 중 하나임을 보장
+  const RESUME_DATA = DATAS[locale].data;
+
   // const projectList = await getSortedProjectList(locale);
   // const careerProjectList = await getCareerProjectList(locale);
   return (
