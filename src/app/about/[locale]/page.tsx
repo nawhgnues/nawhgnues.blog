@@ -32,7 +32,7 @@ export function generateMetadata({ params }: { params: { locale: Locale } }): Me
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function ResumePage({ params }: PageProps): Promise<ReactElement> {
+export default function ResumePage({ params }: PageProps): ReactElement {
   const locale = params.locale;
   const RESUME_DATA = DATAS[locale].data;
 
