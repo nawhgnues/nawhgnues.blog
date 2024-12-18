@@ -1,7 +1,5 @@
 import { Metadata } from "next";
-// import ProjectList from "@/components/about/project-list";
 import CopyLinkButton from "@/components/common/CopyLinkButton";
-// import { ProjectBody } from "@/components/project-detail/project-body";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,12 +8,9 @@ import * as D from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Section } from "@/components/ui/section";
 import { DATAS, Locale } from "@/config/types";
-// import { getCareerProjectList, getSortedProjectList } from "@/lib/project";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
-import { ReactNode } from "react";
 
-// Locale 타입이 DATAS의 키로만 제한되도록
 interface PageProps {
   params: {
     locale: Locale;
@@ -34,7 +29,8 @@ export function generateMetadata({ params }: PageProps): Metadata {
   };
 }
 
-export default function ResumePage({ params }: PageProps): ReactNode {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function ResumePage({ params }: PageProps): Promise<any> {
   const locale = params.locale;
   const RESUME_DATA = DATAS[locale].data;
 
