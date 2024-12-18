@@ -10,17 +10,13 @@ import { Section } from "@/components/ui/section";
 import { DATAS, Locale } from "@/config/types";
 import { cn } from "@/lib/utils";
 import { GlobeIcon, MailIcon } from "lucide-react";
+import { ReactElement } from "react";
 
-interface PageProps {
-  params: {
-    locale: Locale;
-  };
-}
-export function generateStaticParams(): { locale: Locale }[] {
+export async function generateStaticParams(): Promise<{ locale: Locale }[]> {
   return Object.keys(DATAS).map((locale) => ({ locale })) as { locale: Locale }[];
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
   const locale = params.locale;
   const RESUME_DATA = DATAS[locale].data;
   return {
@@ -30,7 +26,7 @@ export function generateMetadata({ params }: PageProps): Metadata {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function ResumePage({ params }: PageProps): Promise<any> {
+export default async function ResumePage({ params }: { params: { locale: Locale } }): Promise<ReactElement> {
   const locale = params.locale;
   const RESUME_DATA = DATAS[locale].data;
 
