@@ -1,0 +1,269 @@
+---
+title: "Setting up ESLint and Prettier in a Next.js Project"
+date: 2025-01-25
+desc: Let's set up ESLint and Prettier to help write consistent code.
+thumbnail: /posts/blog/eslint-prettier/thumbnail.png
+tags: ["eslint", "prettier"]
+locale: en
+---
+
+### Todo
+
+Let's set up ESLint and Prettier to help write consistent code.
+
+### What is ESLint?
+
+ESLint is a Linter tool that highlights errors related to JavaScript syntax or the coding style you have set.
+
+It helps catch syntax errors and define a general coding style, improving the consistency and quality of your code.
+
+> Lint: It means adding markers to code with errors.
+
+### ESLint Setup
+
+In this post, we will set up ESLint for a Next.js(v15) project.
+
+**1. Setting up Next.js project**
+
+```bash
+// Install a Next.js project using pnpm
+pnpm create-next-app
+```
+
+![Select Yes](/posts/blog/eslint-prettier/setup.png)
+
+Running the above command will prompt you whether you want to use ESLint. If you select Yes, an eslint.config.mjs file will be created in the project root folder.
+
+> ⚠️ Starting from ESLint v9, .eslintrc is deprecated. Configuration should now be done using the flat config format in eslint.config.(js | mjs | cjs).
+
+```js
+// eslint.config.mjs
+
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+];
+
+export default eslintConfig;
+```
+
+**2. ESLint Configuration**
+
+Let’s install and configure ESLint's default `no-duplicate-imports` rule along with the `eslint-plugin-unused-imports`, `eslint-plugin-tailwindcss`, and `eslint-config-prettier plugins`.
+
+> 🛠️ List of plugins to use
+>
+> - eslint-plugin-unused-imports: Helps detect and remove unused imports and variables.
+> - eslint-plugin-tailwindcss: Helps maintain consistent styling when using TailwindCSS.
+> - eslint-config-prettier: Prevents conflicts between ESLint and Prettier by disabling ESLint's formatting rules, letting Prettier handle formatting.
+
+**1) Install ESLint Plugins**
+
+```bash
+pnpm add -D eslint-plugin-unused-imports eslint-config-prettier
+```
+
+**2) Modify eslint.config.mjs**
+
+```js
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+// Import the plugins to use
+import unusedImports from "eslint-plugin-unused-imports";
+import eslintConfigPrettier from "eslint-config-prettier";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  // Configuration for files to exclude from ESLint
+  {
+    ignores: [".next", "node_modules", "out"],
+  },
+
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+
+  // Modify default ESLint rules
+  {
+    rules: {
+      "no-duplicate-imports": ["error"],
+    },
+  },
+
+  // Configuration for eslint-plugin-unused-imports
+  {
+    // Specify files to apply ESLint
+    files: ["src/**/*.{js,jsx,ts,tsx}"],
+
+    // It maps the arbitrary value unused-imports with the Config object eslintConfigUnusedImports imported above.
+    plugins: {
+      "unused-imports": eslintConfigUnusedImports,
+    },
+
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+
+  // Configuration for eslint-plugin-tailwindcss
+  {
+    files: ["src/**/*.{js,jsx,ts,tsx}"],
+
+    // It maps the arbitrary value tailwindcss with the Config object eslintConfigTailwindcss imported above.
+    plugins: {
+      tailwindcss: eslintConfigTailwindcss,
+    },
+
+    rules: {
+      "tailwindcss/classnames-order": "warn",
+      "tailwindcss/enforces-shorthand": "warn",
+    },
+  },
+
+  // Configuration for eslint-config-prettier
+  eslintConfigPrettier,
+];
+
+export default eslintConfig;
+
+// ✅ Reference
+// It's also possible to group all plugins and rules in one object.
+  plugins: {
+    "unused-imports": eslintConfigUnusedImports,
+    tailwindcss: eslintConfigTailwindcss,
+  },
+
+  rules: {
+    // eslint-plugin-unused-imports
+    "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        vars: "all",
+        varsIgnorePattern: "^_",
+        args: "after-used",
+        argsIgnorePattern: "^_",
+      },
+    ],
+
+    // eslint-plugin-tailwindcss
+    "tailwindcss/classnames-order": "warn",
+    "tailwindcss/enforces-shorthand": "warn",
+  },
+
+```
+
+> Reference
+> https://www.npmjs.com/package/eslint-plugin-unused-imports https://www.npmjs.com/package/eslint-config-prettier
+
+---
+
+### What is Prettier?
+
+Prettier is a code formatting tool that helps tidy up the code.
+
+### How to Set Up Prettier
+
+This post will guide you through the setup based on the ESM module system.
+
+**1. Create Prettier.config.mjs File**
+
+Create a Prettier.config.mjs file in the project root folder.
+
+**2. Modify the Prettier.config.mjs File**
+
+```js
+const config = {
+  // Add ',' to objects, arrays, functions, etc.
+  trailingComma: "all",
+  // Indentation width
+  tabWidth: 2,
+  // Add semicolons
+  semi: true,
+  // Use single quotes
+  singleQuote: true,
+  // Add spaces inside curly braces
+  bracketSpacing: true,
+  ...
+};
+
+export default config;
+```
+
+> Reference
+> https://prettier.io/docs/en/options.html
+
+**3. Create .prettierignore File**
+
+Specify the files you do not want Prettier to format in the .prettierignore file.
+
+```js
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# lock files
+pnpm-lock.yaml
+
+# node_modules
+/node_modules
+...
+```
+
+> Reference
+> https://prettier.io/docs/en/options.html
+
+---
+
+### vscode Configuration
+
+**1. Install vscode Extensions**
+
+Install the ESLint and Prettier-Code Formatter extensions from the vscode extension marketplace.
+
+**2. Modify settings.json**
+
+To ensure ESLint and Prettier run on file save, add the following code to the vscode settings.json file
+
+```json
+//settings.json
+
+// formatter
+"editor.defaultFormatter": "esbenp.prettier-vscode",
+"editor.formatOnSave": true,
+
+// lint
+"editor.codeActionsOnSave": {
+  "source.fixAll.eslint": "explicit"
+},
+```

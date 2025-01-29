@@ -1,0 +1,268 @@
+---
+title: "Next.js プロジェクトに ESLintとPrettierをセットアップ"
+date: 2025-01-25
+desc: 一貫性のあるコードを書くために、ESLint と Prettier を設定してみましょう。
+thumbnail: /posts/blog/eslint-prettier/thumbnail.png
+tags: ["eslint", "prettier"]
+locale: ja
+---
+
+### Todo
+
+一貫性のあるコードを書くために、ESLintとPrettierをセットアップしてみましょう。
+
+### ESLintとは?
+
+JavaScript の構文や設定されたコーディングスタイルにエラーが発生した場合、それを表示してくれる Linter ツールです。
+
+構文エラーを捕捉したり、全体的なコーディングスタイルを決めることができるため、コードの一貫性や品質を向上させることができます。
+
+> Lint とは？: エラーのあるコードにマークを付けることを意味します。
+
+### ESLint セットアップ方法
+
+この記事では Next.js (v15) プロジェクトを基に設定します。
+
+**1. Next.js プロジェクトの作成**
+
+![Yes を選択します](/posts/blog/eslint-prettier/setup.png)
+
+```bash
+// pnpm を使用して Next.js プロジェクトをインストール
+pnpm create-next-app
+```
+
+上記のコマンドを実行すると、ESLint を使用するかどうかを尋ねられます。Yes を選択すると、プロジェクトのルートフォルダに以下のような eslint.config.mjs ファイルが生成されます。
+
+> ⚠️ ESLint v9 から .eslintrc は非推奨となり、eslint.config.(js | mjs | cjs) で flat config 形式を使用して設定することに変更されました。
+
+```js
+// eslint.config.mjs
+
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+];
+
+export default eslintConfig;
+```
+
+**2. ESLint 設定**
+
+ESLint でデフォルトで提供されている `no-duplicate-imports` 設定と `eslint-plugin-unused-imports`、`eslint-plugin-tailwindcss`、`eslint-config-prettier` プラグインをインストールして設定してみましょう。
+
+> 🛠️ 使用するプラグイン一覧
+>
+> - eslint-plugin-unused-imports: 使用しない import や変数を検出し、削除を支援するプラグイン
+> - eslint-plugin-tailwindcss: TailwindCSS 使用時に一貫性のあるスタイリングを支援するプラグイン
+> - eslint-config-prettier: ESLint と Prettier の衝突を防ぎ、Prettier にフォーマットを任せるように ESLint のフォーマット関連のルールを無効化するプラグイン
+
+**1) ESLint プラグインのインストール**
+
+```bash
+pnpm add -D eslint-plugin-unused-imports eslint-plugin-tailwindcss eslint-config-prettier
+```
+
+**2) eslint.config.mjsの修正**
+
+```js
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+// 使用するプラグインをインポート
+import eslintConfigUnusedImports from "eslint-plugin-unused-imports";
+import eslintConfigTailwindcss from "eslint-plugin-tailwindcss";
+import eslintConfigPrettier from "eslint-config-prettier";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  // ESLint を適用しないファイル設定
+  {
+    ignores: [".next", "node_modules", "out"],
+  },
+
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+
+  // ESLint のデフォルトルールを修正
+  {
+    rules: {
+      "no-duplicate-imports": ["error"],
+    },
+  },
+
+  // eslint-plugin-unused-imports 設定
+  {
+    // ESLint を適用するファイル設定
+    files: ["src/**/*.{js,jsx,ts,tsx}"],
+
+    // 任意の値である unused-importsと、前述でインポートした ConfigオブジェクトeslintConfigUnusedImportsをマッピングします。
+    plugins: {
+      "unused-imports": eslintConfigUnusedImports,
+    },
+
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+
+  // eslint-plugin-tailwindcss 設定
+  {
+    files: ["src/**/*.{js,jsx,ts,tsx}"],
+
+    // 任意の値である tailwindcssと、前述でインポートした ConfigオブジェクトeslintConfigTailwindcssをマッピングします。
+    plugins: {
+      tailwindcss: eslintConfigTailwindcss,
+    },
+
+    rules: {
+      "tailwindcss/classnames-order": "warn",
+      "tailwindcss/enforces-shorthand": "warn",
+    },
+  },
+
+  // eslint-config-prettier 設定
+  eslintConfigPrettier,
+];
+
+export default eslintConfig;
+
+
+// ✅ 備考
+// プラグイン区分しなく一つのオブジェクトに作成することもできる。
+  plugins: {
+    "unused-imports": eslintConfigUnusedImports,
+    tailwindcss: eslintConfigTailwindcss,
+  },
+
+  rules: {
+    // eslint-plugin-unused-imports
+    "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        vars: "all",
+        varsIgnorePattern: "^_",
+        args: "after-used",
+        argsIgnorePattern: "^_",
+      },
+    ],
+
+    // eslint-plugin-tailwindcss
+    "tailwindcss/classnames-order": "warn",
+    "tailwindcss/enforces-shorthand": "warn",
+  },
+
+```
+
+> 設定参考
+> https://www.npmjs.com/package/eslint-plugin-unused-imports https://www.npmjs.com/package/eslint-config-prettier
+
+---
+
+### Prettierとは?
+
+コードを綺麗な形にしてくれるフォーマッティングツールです。.
+
+### Prettier セットアップ方法
+
+この記事では ESM モジュールシステムを基にセットアップします。
+
+**1. Prettier.config.mjs ファイルの作成**
+
+プロジェクトのルートフォルダに Prettier.config.mjs を作成します。
+
+**2. Prettier.config.mjs ファイルの修正**
+
+```js
+const config = {
+  // オブジェクト、配列、関数などに ',' を追加
+  trailingComma: "all",
+  // インデント幅
+  tabWidth: 2,
+  // セミコロンを追加
+  semi: true,
+  // シングルクォートを使用
+  singleQuote: true,
+  // オブジェクトの中括弧内にスペースを追加
+  bracketSpacing: true,
+  ...
+};
+
+export default config;
+```
+
+**3. .prettierignoreファイルの作成**
+
+Prettier を適用したくないファイルは .prettierignore ファイル内に明記します。
+
+```js
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# lock files
+pnpm-lock.yaml
+
+# node_modules
+/node_modules
+...
+```
+
+> 参考
+> https://prettier.io/docs/en/options.html
+
+---
+
+### vscode設定
+
+**1. vscode拡張機能のインストール**
+
+vscode の拡張機能で ESLint と Prettier-Code Formatter をインストールします。
+
+**2. settings.json 修正**
+
+コード保存時に ESLintとPrettierが実行されるように、vscodeのsettings.jsonファイルに以下のコードを追加します。
+
+```json
+//settings.json
+
+// formatter
+"editor.defaultFormatter": "esbenp.prettier-vscode",
+"editor.formatOnSave": true,
+
+// lint
+"editor.codeActionsOnSave": {
+  "source.fixAll.eslint": "explicit"
+},
+```

@@ -1,0 +1,269 @@
+---
+title: "Nextjs 프로젝트에 ESLint, Prettier 셋업"
+date: 2025-01-25
+desc: 일관성 있게 코드를 작성할 수 있게 도와주는 ESLint와 Prettier을 설정해보자.
+thumbnail: /posts/blog/eslint-prettier/thumbnail.png
+tags: ["eslint", "prettier"]
+locale: ko
+---
+
+### Todo
+
+일관성 있게 코드를 작성할 수 있게 도와주는 ESLint와 Prettier을 설정해보자.
+
+### ESLint란?
+
+자바스크립트 문법이나 설정 해둔 코딩 스타일에 대해서 에러가 발생하면 표시해주는 Linter 도구이다.
+
+문법적인 에러를 잡아내거나 전반적인 코딩 스타일을 정할 수 있기 때문에 코드의 일관성이나 퀄리티를 높일 수 있다.
+
+> Lint 란? : 에러가 있는 코드에 표시를 달아놓는 것을 의미한다.
+
+### ESLint 세팅 방법
+
+이 포스트에서는 Next.js(v15) 프로젝트를 기준으로 세팅한다.
+
+**1. Next 프로젝트 생성**
+
+![Yes를 선택해준다](/posts/blog/eslint-prettier/setup.png)
+
+```bash
+// pnpm 사용해 next 프로젝트 설치
+pnpm create-next-app
+```
+
+위의 명령어를 실행하면 ESLint를 사용할 것 인지 물어보는데 `Yes`를 선택하면 프로젝트 루트 폴더 내에 아래와 같은 `eslint.config.mjs` 파일이 생성된다
+
+> ⚠️ ESLint v9부터 .eslintrc는 deprecated 되었고, eslint.config.(js | mjs | cjs)에서 flat config 형식을 이용해 설정을 하도록 변경되었다.
+
+```js
+// eslint.config.mjs
+
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+];
+
+export default eslintConfig;
+```
+
+**2. ESLint 설정**
+
+eslint에서 디폴트로 제공하는 `no-duplicate-imports` 설정과 `eslint-plugin-unused-imports`, `eslint-plugin-tailwindcss`, `eslint-config-prettier` 플러그인을 설치하여 설정해보자.
+
+> 🛠️ 사용 할 플러그인 리스트
+>
+> - eslint-plugin-unused-imports : 사용하지 않는 import와 변수를 감지하고 제거하도록 도와주는 플러그인
+> - eslint-plugin-tailwindcss : tailwindCSS 사용 시 일관성 있게 스타일링 할 수 있도록 도와주는 플러그인
+> - eslint-config-prettier : ESLint와 Prettier 간 충돌을 방지하는 설정으로 Prettier가 포맷팅을 담당하도록 ESLint의 포맷팅 관련 규칙을 비활성화해주는 플러그인
+
+**1) ESLint 플러그인 설치**
+
+```bash
+pnpm add -D eslint-plugin-unused-imports eslint-plugin-tailwindcss eslint-config-prettier
+```
+
+**2) eslint.config.mjs 수정**
+
+```js
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
+
+// 사용 할 플러그인을 import 해준다.
+import eslintConfigUnusedImports from "eslint-plugin-unused-imports";
+import eslintConfigTailwindcss from "eslint-plugin-tailwindcss";
+import eslintConfigPrettier from "eslint-config-prettier";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  // ESLint를 적용하지 않을 파일 설정
+  {
+    ignores: [".next", "node_modules", "out"],
+  },
+
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+
+  // ESLint가 디폴트로 제공하는 규칙 수정
+  {
+    rules: {
+      "no-duplicate-imports": ["error"],
+    },
+  },
+
+  // eslint-plugin-unused-imports 설정
+  {
+    // ESLint를 적용 할 파일을 명시
+    files: ["src/**/*.{js,jsx,ts,tsx}"],
+
+    // 임의값인unused-imports와 위에서 import한 Config객체eslintConfigUnusedImports를 mapping해준다
+    plugins: {
+      "unused-imports": eslintConfigUnusedImports,
+    },
+
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+
+  // eslint-plugin-tailwindcss 설정
+  {
+    files: ["src/**/*.{js,jsx,ts,tsx}"],
+
+    // 임의값인tailwindcss와 위에서 import한 Config객체eslintConfigTailwindcss를 mapping해준다
+    plugins: {
+      tailwindcss: eslintConfigTailwindcss,
+    },
+
+    rules: {
+      "tailwindcss/classnames-order": "warn",
+      "tailwindcss/enforces-shorthand": "warn",
+    },
+  },
+
+  // eslint-config-prettier 설정
+  eslintConfigPrettier,
+];
+
+export default eslintConfig;
+
+
+// ✅ 참고
+// 플러그인 구분없이 하나의 객체에 몰아서 작성하는것도 가능
+  plugins: {
+    "unused-imports": eslintConfigUnusedImports,
+    tailwindcss: eslintConfigTailwindcss,
+  },
+
+  rules: {
+    // eslint-plugin-unused-imports
+    "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        vars: "all",
+        varsIgnorePattern: "^_",
+        args: "after-used",
+        argsIgnorePattern: "^_",
+      },
+    ],
+
+    // eslint-plugin-tailwindcss
+    "tailwindcss/classnames-order": "warn",
+    "tailwindcss/enforces-shorthand": "warn",
+  },
+
+```
+
+> 설정 참고
+> https://www.npmjs.com/package/eslint-plugin-unused-imports https://www.npmjs.com/package/eslint-config-prettier
+
+---
+
+### Prettier란?
+
+코드를 이쁘게 정리해주는 Formatting 도구이다.
+
+### Prettier 세팅 방법
+
+이 포스트에서는 ESM 모듈 시스템을 기준으로 세팅한다.
+
+**1. Prettier.config.mjs 파일 생성**
+
+프로젝트 루트 폴더에 Prettier.config.mjs을 만들어준다.
+
+**2. Prettier.config.mjs 파일 수정**
+
+```js
+const config = {
+  // 객체, 배열, 함수 등에 ',' 를 추가
+  trailingComma: "all",
+  // 들여쓰기 너비
+  tabWidth: 2,
+  // 세미콜론 추가
+  semi: true,
+  // 작은 따옴표 사용
+  singleQuote: true,
+  // 객체 중괄호 안에 공백 추가
+  bracketSpacing: true,
+  ...
+};
+
+export default config;
+```
+
+**3. .prettierignore 파일 생성**
+
+prettier를 적용하고 싶지 않은 파일은 .prettierignore 파일 내부에 명시해준다.
+
+```js
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# lock files
+pnpm-lock.yaml
+
+# node_modules
+/node_modules
+...
+```
+
+> 설정 참고
+> https://prettier.io/docs/en/options.html
+
+---
+
+### vscode 설정
+
+**1. vscode extension 설치**
+
+vscode의 확장프로그램에서 ESLint, Prettier-Code formatter를 설치해준다.
+
+**2. settings.json 수정**
+
+코드 저장했을 때 ESLint, Prettier가 실행되게 하기 위해 vscode의 settings.json파일에 아래의 코드를 추가해준다.
+
+```json
+//settings.json
+
+// formatter
+"editor.defaultFormatter": "esbenp.prettier-vscode",
+"editor.formatOnSave": true,
+
+// lint
+"editor.codeActionsOnSave": {
+  "source.fixAll.eslint": "explicit"
+},
+
+```
