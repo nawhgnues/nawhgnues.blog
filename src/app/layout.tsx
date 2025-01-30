@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 
 import { Toaster } from "@/components/ui/toaster";
-import { baseDomain, blogDesc, blogName, blogThumbnailURL } from "@/config/const";
+import {
+  baseDomain,
+  blogDesc,
+  blogName,
+  blogThumbnailURL,
+} from "@/config/const";
 import "@/config/globals.css";
 import { Footer } from "@/layouts/Footer";
 import { Header } from "@/layouts/Header";
@@ -35,7 +40,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full scroll-my-20 scroll-smooth" suppressHydrationWarning>
+    <html
+      lang="en"
+      className="h-full scroll-my-20 scroll-smooth"
+      suppressHydrationWarning
+    >
       <body className="font-pretendard flex min-h-screen flex-col">
         <ThemeProvider>
           <Header />
@@ -45,8 +54,14 @@ export default function RootLayout({
         <Toaster />
         <Analytics />
         <SpeedInsights />
-        <GoogleAnalytics gaId="G-TRBVGE9TYP" />
-        <GoogleTagManager gtmId="G-TRBVGE9TYP" />
+        {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />
+        )}
+        {process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER && (
+          <GoogleTagManager
+            gtmId={process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}
+          />
+        )}
       </body>
     </html>
   );
