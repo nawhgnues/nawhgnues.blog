@@ -1,0 +1,164 @@
+---
+title: "Redux 리뷰"
+date: 2025-02-10
+desc: Redux 리뷰하기
+thumbnail: /posts/blog/redux/redux.png
+tags: ["redux", "redux-toolkit", "state-management"]
+locale: ko
+---
+
+주로 사용해왔던 Recoil이 **25년 1월 12일 부로 개발 종료 선언**이 되었기 때문에 다른 상태 관리 라이브러리로 이사를 가볼까? 생각이 들던 중 이전에 공부했었던 리덕스를 리뷰해보고 싶어졌다.
+
+### Redux 주요 개념
+
+- Store : 상태 저장소
+- Action : Store의 상태를 변경한다.
+- Reducer : 현재 상태와 액션 객체를 받아 새로운 상태를 리턴한다.
+- Dispatch : 액션 객체를 넘겨 상태를 업데이트 시켜주는 역할을 한다.
+- Subscribe : 상태 변경 시 Subscribe된 함수 및 객체를 호출한다.
+
+### Redux 사용하기
+
+#### 1.Store 만들기
+
+```js
+import { legacy_createStore as createStore } from "redux";
+
+const INCREASE = "INCREASE";
+const DECREMENT = "DECREMENT";
+
+const initialState = {
+  value: 0,
+  id: Date.now(),
+};
+
+// reducer 생성
+const reducer = (state = initialState, action) => {
+  // 어떤 종류의 액션이 발생했는지 식별
+  switch (action.type) {
+    case INCREASE:
+      return {
+        ...state,
+        value: state.value + 1,
+      };
+    case DECREMENT:
+      return {
+        ...state,
+        value: state.value - 1,
+      };
+    default:
+      return state;
+  }
+};
+
+const store = createStore(reducer);
+export { store, INCREASE, DECREMENT };
+```
+
+#### 2. Store 사용하기
+
+```js
+// Provider로 감싸기
+import { Provider } from "react-redux";
+import { store } from "./store";
+
+<Provider store={store}>
+  <App />
+</Provider>;
+```
+
+```js
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { INCREASE, DECREMENT } from "./store";
+
+const increase = () => ({ type: INCREASE });
+const decrement = () => ({ type: DECREMENT });
+
+const App = () => {
+  // 상태 가져오기
+  const count = useSelector((state) => state.value);
+
+  // 디스패치 함수 가져오기
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <h1>Counter: {count}</h1>
+      <button onClick={() => dispatch(increase())}>+</button>
+      <button onClick={() => dispatch(decrement())}>-</button>
+    </div>
+  );
+};
+```
+
+### Redux Toolkit 사용하기
+
+Redux 사용 시 보일러플레이트 코드가 너무 긴 문제와 기존 객체를 직접적으로 수정하면 안되는 규칙으로 불편한 점이 있다. 이러한 문제점들을 해결하기 위해 Redux Toolkit이 등장했다.
+
+#### 1. createSlice 생성
+
+```js
+// counterReducer.ts
+import { createSlice } from "@reduxjs/toolkit";
+export const counterSlice = createSlice({
+  name: "counter",
+  initialState: {
+    value: 0,
+    id: Date.now(),
+  },
+  reducers: {
+    increase: (state) => {
+      state.value = state.value + 1;
+    },
+    decrement: (state) => {
+      state.value = state.value - 1;
+    },
+  },
+});
+
+export const { increase, decrement } = counterSlice.actions;
+export default counterSlice.reducer;
+```
+
+#### 2. configureStore로 store 생성
+
+```js
+import { configureStore } from "@reduxjs/toolkit";
+import counterReducer from "./counterReducer";
+
+export const store = configureStore({
+  reducer: counterReducer,
+});
+```
+
+#### 3. store 상태 변경하기
+
+```js
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { increase, decrement } from "./counter/countSlice";
+
+export default function App() {
+  const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <h1>Counter: {count}</h1>
+      <button onClick={() => dispatch(increase())}>+</button>
+      <button onClick={() => dispatch(decrement())}>-</button>
+    </div>
+  );
+}
+```
+
+---
+
+### 정리
+
+Redux의 상태관리 방법은 `Action → Reducer → Store → Dispatch`흐름으로 상태흐름이 명확하고 일관적인 느낌을 받았다.
+
+위와 같은 이유로 상태관리가 복잡한 대규모 서비스에서 예측 가능성과 유지보수성이 좋을 것 같다는 생각이 들었다.
+
+그러나 긴 보일러플레이트로 인해 간단한 프로젝트에서는 개인적으로는 Zustand를 사용할 것 같다.

@@ -1,0 +1,164 @@
+---
+title: "Redux レビュー"
+date: 2025-02-10
+desc: Redux レビュー
+thumbnail: /posts/blog/redux/redux.png
+tags: ["redux", "redux-toolkit", "state-management"]
+locale: ja
+---
+
+今まで主に使ってきたRecoilが2025年1月12日をもって開発終了を宣言したため、他の状態管理ライブラリへ移行しようかと考えています。そんな中、以前勉強したReduxをレビューしてみたくなりました。
+
+### Redux メイン概念
+
+- Store : 状態の保存場所
+- Action : Storeの状態を変更する
+- Reducer : 現在の状態とアクションオブジェクトを受け取り、新しい状態を返す
+- Dispatch : アクションオブジェクトを渡して状態を更新する役割を果たす
+- Subscribe : 状態が変更された際に、Subscribeされた関数やオブジェクトを呼び出す
+
+### Redux 使い方
+
+#### 1.Storeを作る
+
+```js
+import { legacy_createStore as createStore } from "redux";
+
+const INCREASE = "INCREASE";
+const DECREMENT = "DECREMENT";
+
+const initialState = {
+  value: 0,
+  id: Date.now(),
+};
+
+// reducer作成
+const reducer = (state = initialState, action) => {
+  // どんなアクションができたか判断
+  switch (action.type) {
+    case INCREASE:
+      return {
+        ...state,
+        value: state.value + 1,
+      };
+    case DECREMENT:
+      return {
+        ...state,
+        value: state.value - 1,
+      };
+    default:
+      return state;
+  }
+};
+
+const store = createStore(reducer);
+export { store, INCREASE, DECREMENT };
+```
+
+#### 2. Storeを使う
+
+```js
+// ReduxのStoreをReactアプリ全体に提供するため、ProviderでAppコンポーネントを囲む
+import { Provider } from "react-redux";
+import { store } from "./store";
+
+<Provider store={store}>
+  <App />
+</Provider>;
+```
+
+```js
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { INCREASE, DECREMENT } from "./store";
+
+const increase = () => ({ type: INCREASE });
+const decrement = () => ({ type: DECREMENT });
+
+const App = () => {
+  // Storeに保存されてる状態を取ってくる
+  const count = useSelector((state) => state.value);
+
+  // Dispatch関数取ってくる
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <h1>Counter: {count}</h1>
+      <button onClick={() => dispatch(increase())}>+</button>
+      <button onClick={() => dispatch(decrement())}>-</button>
+    </div>
+  );
+};
+```
+
+### Redux Toolkit 使う
+
+Redux使用時のボイラープレートコードが長すぎる問題や、既存のオブジェクトを直接修正してはいけないというルールによる不便さがある。これらの問題を解決するために、Redux Toolkitが登場した。
+
+#### 1. createSlice 作成
+
+```js
+// counterReducer.ts
+import { createSlice } from "@reduxjs/toolkit";
+export const counterSlice = createSlice({
+  name: "counter",
+  initialState: {
+    value: 0,
+    id: Date.now(),
+  },
+  reducers: {
+    increase: (state) => {
+      state.value = state.value + 1;
+    },
+    decrement: (state) => {
+      state.value = state.value - 1;
+    },
+  },
+});
+
+export const { increase, decrement } = counterSlice.actions;
+export default counterSlice.reducer;
+```
+
+#### 2. configureStoreで Store作成
+
+```js
+import { configureStore } from "@reduxjs/toolkit";
+import counterReducer from "./counterReducer";
+
+export const store = configureStore({
+  reducer: counterReducer,
+});
+```
+
+#### 3. Storeの状態更新
+
+```js
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { increase, decrement } from "./counter/countSlice";
+
+export default function App() {
+  const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <h1>Counter: {count}</h1>
+      <button onClick={() => dispatch(increase())}>+</button>
+      <button onClick={() => dispatch(decrement())}>-</button>
+    </div>
+  );
+}
+```
+
+---
+
+### 整理
+
+Reduxの状態管理方法は `Action → Reducer → Store → Dispatch`という流れで、状態の流れが明確で一貫していると感じた。
+
+このような理由から、状態管理が複雑な大規模サービスでは予測可能性とメンテナンス性が高いと思った。
+
+しかし、長いボイラープレートがあるため、シンプルなプロジェクトでは個人的にZustandを使うと思う。

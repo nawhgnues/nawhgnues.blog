@@ -1,0 +1,164 @@
+---
+title: "Redux Review"
+date: 2025-02-10
+desc: Redux Review
+thumbnail: /posts/blog/redux/redux.png
+tags: ["redux", "redux-toolkit", "state-management"]
+locale: en
+---
+
+Since Recoil, which I had primarily used until now, declared the end of development on January 12, 2025, I'm considering switching to another state management library. In this process, I decided to review Redux, which I studied previously.
+
+### Main Concepts of Redux
+
+- Store: The place where the state is stored.
+- Action: Changes the state of the Store.
+- Reducer: Takes the current state and the action object to return a new state.
+- Dispatch: Passes the action object to update the state.
+- Subscribe: Calls the functions or objects that are subscribed when the state changes.
+
+### Using Redux
+
+#### 1.Creating the Store
+
+```js
+import { legacy_createStore as createStore } from "redux";
+
+const INCREASE = "INCREASE";
+const DECREMENT = "DECREMENT";
+
+const initialState = {
+  value: 0,
+  id: Date.now(),
+};
+
+// Create the reducer
+const reducer = (state = initialState, action) => {
+  // Determine which action occurred.
+  switch (action.type) {
+    case INCREASE:
+      return {
+        ...state,
+        value: state.value + 1,
+      };
+    case DECREMENT:
+      return {
+        ...state,
+        value: state.value - 1,
+      };
+    default:
+      return state;
+  }
+};
+
+const store = createStore(reducer);
+export { store, INCREASE, DECREMENT };
+```
+
+#### 2. Using the Store
+
+```js
+// Wrapping the App component with Provider to supply the Redux Store to the entire React app
+import { Provider } from "react-redux";
+import { store } from "./store";
+
+<Provider store={store}>
+  <App />
+</Provider>;
+```
+
+```js
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { INCREASE, DECREMENT } from "./store";
+
+const increase = () => ({ type: INCREASE });
+const decrement = () => ({ type: DECREMENT });
+
+const App = () => {
+  // Fetch the state stored in the Store
+  const count = useSelector((state) => state.value);
+
+  // Get the dispatch function
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <h1>Counter: {count}</h1>
+      <button onClick={() => dispatch(increase())}>+</button>
+      <button onClick={() => dispatch(decrement())}>-</button>
+    </div>
+  );
+};
+```
+
+### Using Redux Toolkit
+
+There were issues with long boilerplate code in Redux and the rule of not directly modifying existing objects, which could be inconvenient. To address these issues, Redux Toolkit was introduced.
+
+#### 1. Creating a createSlice
+
+```js
+// counterReducer.ts
+import { createSlice } from "@reduxjs/toolkit";
+export const counterSlice = createSlice({
+  name: "counter",
+  initialState: {
+    value: 0,
+    id: Date.now(),
+  },
+  reducers: {
+    increase: (state) => {
+      state.value = state.value + 1;
+    },
+    decrement: (state) => {
+      state.value = state.value - 1;
+    },
+  },
+});
+
+export const { increase, decrement } = counterSlice.actions;
+export default counterSlice.reducer;
+```
+
+#### 2. Creating the Store with configureStore
+
+```js
+import { configureStore } from "@reduxjs/toolkit";
+import counterReducer from "./counterReducer";
+
+export const store = configureStore({
+  reducer: counterReducer,
+});
+```
+
+#### 3. Updating the Store State
+
+```js
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { increase, decrement } from "./counter/countSlice";
+
+export default function App() {
+  const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <h1>Counter: {count}</h1>
+      <button onClick={() => dispatch(increase())}>+</button>
+      <button onClick={() => dispatch(decrement())}>-</button>
+    </div>
+  );
+}
+```
+
+---
+
+### Summary
+
+The state management flow in Redux, from `Action → Reducer → Store → Dispatch`, feels clear and consistent.
+
+For this reason, I think it has good predictability and maintainability, especially in large-scale services where state management is complex.
+
+However, due to the long boilerplate code, for simpler projects, I personally prefer using Zustand.

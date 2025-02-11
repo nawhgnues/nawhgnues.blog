@@ -24,8 +24,8 @@ app
    layouts
    hook
    lib
-   posts --- 블로그 포스트 데이터터
-   projects --- 프로젝트 관련 데이터터
+   posts --- 블로그 포스트 데이터
+   projects --- 프로젝트 관련 데이터
 ```
 
 ### 🛠️ 기술 스택
