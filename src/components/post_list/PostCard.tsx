@@ -32,15 +32,23 @@ const PostCard = ({ post, locale }: Props) => {
             <div className="flex items-center gap-3 transition text-xs text-gray-400 dark:text-gray-400 sm:text-sm">
               <span>{post.dateString}</span>
             </div>
-            <h2 className="mb-1 mt-1 text-lg font-bold sm:text-xl md:text-lg group-hover:opacity-75">{post.title}</h2>
+            <h2 className="mb-1 mt-1 text-lg font-bold sm:text-xl md:text-lg group-hover:opacity-75">
+              {post.title}
+            </h2>
             <p className="mb-16 text-md text-gray-600">{post.desc}</p>
           </div>
         </Link>
 
         <div className="flex gap-3">
           {post.tags?.map((tag) => (
-            <Link key={tag} href={`/blog/${locale}/${tag.toLowerCase()}`} className="w-min group">
-              <div className="text-sm font-bold mr-1 text-tomato group-hover:text-blue-500">#{tag}</div>
+            <Link
+              key={tag}
+              href={`/blog/${locale}/${tag.toLowerCase()}`}
+              className="w-min group"
+            >
+              <div className="text-sm font-bold mr-1 text-tomato group-hover:text-blue-500 whitespace-nowrap">
+                #{tag}
+              </div>
             </Link>
           )) || <div className="text-sm text-gray-400">No tags available</div>}
         </div>
