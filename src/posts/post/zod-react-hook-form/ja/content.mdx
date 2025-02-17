@@ -1,0 +1,260 @@
+---
+title: "zod, react-hook-form レビュー"
+date: 2025-02-15
+thumbnail: /posts/blog/zod-react-hook-form/zod-react-hook-form.png
+desc: zod, react-hook-form 使ってフォームをリファクタリングする
+tags: ["zod", "react-hook-form"]
+locale: ja
+---
+
+プロジェクト内の既存の入力フォームをリファクタリングする中で、改めて [zod]("https://zod.dev/") と [react hook form]("https://react-hook-form.com/") について見直したくなった。
+
+## zod, react hook form 使う前
+
+メールフォーム一つだけでも、メールの値、バリデーションの状態、バリデーション処理など、記述しなければならないコードが非常に多くなる。さらに、フォームが増えるほど管理すべき状態も多くなり、フォーム入力のたびにコンポーネント全体が再レンダリングされるため、パフォーマンスの低下を招く可能性がある。
+
+**上記の問題を、ZodとReact Hook Formを利用してリファクタリングしようと思っています.**
+
+```js
+// email フォーム状態管理
+const [email, setEmail] = useState("");
+const [emailIsValid, setEmailIsValid] = useState({
+  message: "email is required",
+  isError: true,
+});
+
+// メールのバリデーション処理
+const checkEmailVerification = (value: string) => {
+  if (value == "") {
+    setEmailIsValid({ isError: true, message: "email is required" });
+    return;
+  }
+  setEmailIsValid({ isError: false, message: "" });
+};
+
+const emailOnChange = (value: string) => {
+setEmail(value);
+checkEmailVerification(value);
+};
+
+// フォームのバリデーション状態
+const formIsValid = !emailIsValid.isError && その他のフォームエラー状態 ...
+
+(省略)
+
+<input
+    name="email"
+    type="text"
+    value={email}
+    onChange={(e) => emailOnChange(e.target.value)}
+/>
+
+<button disabled={!formIsValid}>Submit</button>
+```
+
+## zod, react hook form 使う
+
+### 1. zod なんで使う
+
+- バリデーションを簡単に処理できる。
+- TypeScriptだけではランタイムの型検証ができない。
+
+### 2. react hook form なんで使う?
+
+- フォームに関連するコードをシンプルに記述できる。
+- 制御コンポーネントと非制御コンポーネントの利点のみを活用できる。
+
+> ✅ Controlled Component vs Uncontrolled Component
+>
+> **Controlled Component** : stateを使用してデータを管理する場合、入力フォームが増えるほど管理すべきstateも増え、フォームの入力値が変わるたびに再レンダリングが発生します。この過程で不必要な計算が行われる可能性があります。
+>
+> - いつ使えばいいか? : フォーム入力値が変わるたびにバリデーションが必要な場合
+>
+> **Uncontrolled Component** : stateを持たず、ユーザー入力に対するDOMイベントを直接処理してデータを抽出する。
+>
+> - いつ使えばいいか? : パフォーマンス最適化が重要な場合、外部ライブラリとの統合時
+
+## zod, react hook form 使ってリファクタリング
+
+```js
+import { useForm, SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z
+  .object({
+    email: z.string().nonempty({ message: "Email is required" }).email(),
+    password: z.string().nonempty({ message: "Password is required" }),
+    passwordConfirm: z.string().nonempty({ message: "Check your password" }),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    path: ["passwordConfirm"],
+    message: "Check your password",
+  });
+
+type LoginProp = z.infer<typeof loginSchema>;
+
+export default function LoginPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginProp>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit: SubmitHandler<LoginProp> = (data) => ログインデータ処理;
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <label htmlFor="email">e-mail</label>
+        <input
+          id="email"
+          {...register("email", { required: true })}
+        />
+        {errors.email?.message && (
+          <span>
+            {errors.email?.message}
+          </span>
+        )}
+
+        <label htmlFor="password">password</label>
+        <input
+          id="password"
+          type="password"
+          {...register("password")}
+        />
+
+        {errors.password?.message && (
+          <span>
+            {errors.password?.message}
+          </span>
+        )}
+
+        <label>password confirm</label>
+        <input
+          id="passwordConfirm"
+          type="password"
+          {...register("passwordConfirm")}
+        />
+
+        {errors.passwordConfirm?.message && (
+          <span>
+            {errors.passwordConfirm?.message}
+          </span>
+        )}
+
+        <buttontype="submit">Submit</button>
+      </form>
+    </div>
+  );
+}
+
+```
+
+## + input コンポネント化
+
+### 1. register 使う方法
+
+- 比較的簡単なフォームで不必要な状態管理を最小限に抑え、最適化を最大限に活用したい時
+
+```js
+// Input.tsx
+type InputProps = {
+  id: "email" | "password" | "passwordConfirm";
+  type?: string;
+  register: UseFormRegister<LoginProp>;
+  errorMessage?: string;
+};
+
+export const Input = ({
+  id,
+  type = "text",
+  register,
+  errorMessage,
+}: InputProps) => {
+  return (
+    <div>
+      <input
+        id={id}
+        type={type}
+        {...register(id)}
+      />
+      {errorMessage && (
+        <span>{errorMessage}</span>
+      )}
+    </div>
+  );
+};
+
+// LoginPage.tsx
+<Input
+    id="password"
+    type="password"
+    register={register}
+    errorMessage={errors.password?.message}
+/>
+```
+
+### 2. useController 使う方法
+
+- カスタムコンポーネントを使用したり、複雑なフォーム状態管理を行う場合
+
+```js
+
+// Input.tsx
+import React from "react";
+import { useController, Control, FieldValues, Path } from "react-hook-form";
+
+type InputProps<T extends FieldValues> = {
+  name: Path<T>;
+  control: Control<T>;
+  type?: string;
+  label?: string;
+};
+
+export const Input = <T extends FieldValues>({
+  name,
+  control,
+  type = "text",
+  label,
+}: InputProps<T>) => {
+  const {
+    field,
+    fieldState: { error },
+  } = useController<T>({
+    name,
+    control,
+    rules: { required: `${label || name} is required` },
+  });
+
+  return (
+    <div>
+      {label && (
+        <label htmlFor={name}>{label}</label>
+        )}
+      <input
+        id={name}
+        type={type}
+        {...field}
+      />
+      {error && (
+        <span">{error.message}</span>
+      )}
+    </div>
+  );
+};
+
+// LoginPage.tsx
+const { control, handleSubmit } = useForm<LoginProp>({
+    ...
+});
+
+<Input
+    name="password"
+    type="password"
+    label="Password"
+    control={control}
+/>
+```

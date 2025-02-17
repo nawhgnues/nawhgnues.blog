@@ -1,0 +1,260 @@
+---
+title: "Recap zod, react-hook-form"
+date: 2025-02-15
+thumbnail: /posts/blog/zod-react-hook-form/zod-react-hook-form.png
+desc: Refactoring the input form using Zod and React Hook Form.
+tags: ["zod", "react-hook-form"]
+locale: en
+---
+
+While refactoring the existing input forms in the project, I wanted to review [zod]("https://zod.dev/") and [react hook form]("https://react-hook-form.com/") once again.
+
+## Before using Zod and React Hook Form.
+
+Even for just one email form, the amount of code required to handle the email value, validation state, and validation processing becomes quite large. Additionally, as more forms are added, the number of states to manage increases, and since the entire component re-renders every time the form input changes, it could lead to performance degradation.
+
+**I plan to refactor the above issues using Zod and React Hook Form.**
+
+```js
+// Email form state management
+const [email, setEmail] = useState("");
+const [emailIsValid, setEmailIsValid] = useState({
+  message: "email is required",
+  isError: true,
+});
+
+// Email validation handling
+const checkEmailVerification = (value: string) => {
+  if (value == "") {
+    setEmailIsValid({ isError: true, message: "email is required" });
+    return;
+  }
+  setEmailIsValid({ isError: false, message: "" });
+};
+
+const emailOnChange = (value: string) => {
+setEmail(value);
+checkEmailVerification(value);
+};
+
+// State of form validation
+const formIsValid = !emailIsValid.isError && Other form error states ...
+
+(Skip...)
+
+<input
+    name="email"
+    type="text"
+    value={email}
+    onChange={(e) => emailOnChange(e.target.value)}
+/>
+
+<button disabled={!formIsValid}>Submit</button>
+```
+
+## Using Zod with React Hook Form
+
+### 1. Why use Zod?
+
+- It makes validation easy to handle.
+- TypeScript alone cannot perform runtime type validation.
+
+### 2. Why use react hook form?
+
+- It allows you to write form-related code in a simpler way.
+- You can leverage the advantages of both controlled and uncontrolled components.
+
+> ✅ Controlled Component vs Uncontrolled Component
+>
+> **Controlled Component** : State is used to manage data, and as the number of input forms increases, the number of states to manage also increases. Each time the form input value changes, re-renders occur. During this process, unnecessary computations may happen.
+>
+> - When is it good to use controlled components?: When validation is required every time the form input value changes.
+>
+> **Uncontrolled Component** : Does not have state and directly handles DOM events for user input to extract data.
+>
+> When is it good to use uncontrolled components?: When performance optimization is important, or when integrating with external libraries.
+
+## Refactoring with Zod and React Hook Form.
+
+```js
+import { useForm, SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z
+  .object({
+    email: z.string().nonempty({ message: "Email is required" }).email(),
+    password: z.string().nonempty({ message: "Password is required" }),
+    passwordConfirm: z.string().nonempty({ message: "Check your password" }),
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    path: ["passwordConfirm"],
+    message: "Check your password",
+  });
+
+type LoginProp = z.infer<typeof loginSchema>;
+
+export default function LoginPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginProp>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit: SubmitHandler<LoginProp> = (data) => Handling login data;
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <label htmlFor="email">e-mail</label>
+        <input
+          id="email"
+          {...register("email", { required: true })}
+        />
+        {errors.email?.message && (
+          <span>
+            {errors.email?.message}
+          </span>
+        )}
+
+        <label htmlFor="password">password</label>
+        <input
+          id="password"
+          type="password"
+          {...register("password")}
+        />
+
+        {errors.password?.message && (
+          <span>
+            {errors.password?.message}
+          </span>
+        )}
+
+        <label>password confirm</label>
+        <input
+          id="passwordConfirm"
+          type="password"
+          {...register("passwordConfirm")}
+        />
+
+        {errors.passwordConfirm?.message && (
+          <span>
+            {errors.passwordConfirm?.message}
+          </span>
+        )}
+
+        <buttontype="submit">Submit</button>
+      </form>
+    </div>
+  );
+}
+
+```
+
+## + Creating a reusable input component.
+
+### 1. register
+
+- When you want to minimize unnecessary state management and maximize optimization in relatively simple forms.
+
+```js
+// Input.tsx
+type InputProps = {
+  id: "email" | "password" | "passwordConfirm";
+  type?: string;
+  register: UseFormRegister<LoginProp>;
+  errorMessage?: string;
+};
+
+export const Input = ({
+  id,
+  type = "text",
+  register,
+  errorMessage,
+}: InputProps) => {
+  return (
+    <div>
+      <input
+        id={id}
+        type={type}
+        {...register(id)}
+      />
+      {errorMessage && (
+        <span>{errorMessage}</span>
+      )}
+    </div>
+  );
+};
+
+// LoginPage.tsx
+<Input
+    id="password"
+    type="password"
+    register={register}
+    errorMessage={errors.password?.message}
+/>
+```
+
+### 2. useController
+
+- When using custom components or managing complex form states.
+
+```js
+
+// Input.tsx
+import React from "react";
+import { useController, Control, FieldValues, Path } from "react-hook-form";
+
+type InputProps<T extends FieldValues> = {
+  name: Path<T>;
+  control: Control<T>;
+  type?: string;
+  label?: string;
+};
+
+export const Input = <T extends FieldValues>({
+  name,
+  control,
+  type = "text",
+  label,
+}: InputProps<T>) => {
+  const {
+    field,
+    fieldState: { error },
+  } = useController<T>({
+    name,
+    control,
+    rules: { required: `${label || name} is required` },
+  });
+
+  return (
+    <div>
+      {label && (
+        <label htmlFor={name}>{label}</label>
+        )}
+      <input
+        id={name}
+        type={type}
+        {...field}
+      />
+      {error && (
+        <span">{error.message}</span>
+      )}
+    </div>
+  );
+};
+
+// LoginPage.tsx
+const { control, handleSubmit } = useForm<LoginProp>({
+    ...
+});
+
+<Input
+    name="password"
+    type="password"
+    label="Password"
+    control={control}
+/>
+```
